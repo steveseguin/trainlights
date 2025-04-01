@@ -2,7 +2,7 @@
 const LIFX_LIGHT_ID = "d073d56b8996"; // Lifx Train Room
 
 // Cloudflare Worker URL - replace with your actual deployed worker URL
-const WORKER_URL = "https://your-worker.your-account.workers.dev";
+const WORKER_URL = "https://railtrain.vdo.workers.dev";
 
 // Function to control LIFX light through Cloudflare Worker
 function controlLifxLight(state) {
