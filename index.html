@@ -3,99 +3,519 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Train Room Control</title>
+  <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPCEtLSBTaWduYWwgUG9zdCAtLT4KICA8cmVjdCB4PSIyOCIgeT0iMTAiIHdpZHRoPSI4IiBoZWlnaHQ9IjQ0IiBmaWxsPSIjNTU1NTU1IiAvPgogIAogIDwhLS0gQmFzZSAtLT4KICA8cmVjdCB4PSIyMCIgeT0iNTQiIHdpZHRoPSIyNCIgaGVpZ2h0PSI2IiByeD0iMiIgZmlsbD0iIzMzMzMzMyIgLz4KICAKICA8IS0tIFNpZ25hbCBIb3VzaW5nIC0tPgogIDxyZWN0IHg9IjIyIiB5PSI0IiB3aWR0aD0iMjAiIGhlaWdodD0iNDIiIHJ4PSIzIiBmaWxsPSIjMjIyMjIyIiBzdHJva2U9IiM0NDQ0NDQiIHN0cm9rZS13aWR0aD0iMSIgLz4KICAKICA8IS0tIFJlZCBMaWdodCAtLT4KICA8Y2lyY2xlIGN4PSIzMiIgY3k9IjE2IiByPSI2IiBmaWxsPSIjZTc0YzNjIiAvPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMTYiIHI9IjMiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMyIgLz4KICAKICA8IS0tIFllbGxvdyBMaWdodCAtLT4KICA8Y2lyY2xlIGN4PSIzMiIgY3k9IjMwIiByPSI2IiBmaWxsPSIjZjFjNDBmIiAvPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iMzAiIHI9IjMiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMyIgLz4KICAKICA8IS0tIEdyZWVuIExpZ2h0IC0tPgogIDxjaXJjbGUgY3g9IjMyIiBjeT0iNDQiIHI9IjYiIGZpbGw9IiMyZWNjNzEiIC8+CiAgPGNpcmNsZSBjeD0iMzIiIGN5PSI0NCIgcj0iMyIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4zIiAvPgogIAogIDwhLS0gU2hpbmUgRWZmZWN0IG9uIEhvdXNpbmcgLS0+CiAgPHJlY3QgeD0iMjIiIHk9IjQiIHdpZHRoPSI2IiBoZWlnaHQ9IjQyIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjA1IiAvPgo8L3N2Zz4=" type="image/svg+xml">
+  <title>Train Simulator Control Panel</title>
   <style>
+    :root {
+      --dark-metal: #2c3e50;
+      --light-metal: #95a5a6;
+      --signal-red: #e74c3c;
+      --signal-green: #2ecc71;
+      --signal-yellow: #f1c40f;
+      --panel-bg: #34495e;
+      --switch-bg: #7f8c8d;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .button-panel {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 10px;
-      margin: 20px 0;
-    }
-    button {
-      padding: 15px;
-      background-color: #0078d7;
+      font-family: 'Courier New', monospace;
+      background-color: var(--dark-metal);
       color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 16px;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .control-panel {
+      background-color: var(--panel-bg);
+      border-radius: 10px;
+      margin: 20px;
+      padding: 20px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+      border: 2px solid var(--light-metal);
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--light-metal);
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .panel-title {
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: bold;
+      font-size: 1.5rem;
+      text-shadow: 0 0 5px rgba(255,255,255,0.5);
+    }
+    
+    .status-indicator {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: var(--signal-green);
+      box-shadow: 0 0 10px var(--signal-green);
+      animation: blink 2s infinite;
+      margin-left: 10px;
+      display: inline-block;
+    }
+    
+    .panel-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      flex: 1;
+    }
+    
+    .section {
+      border: 1px solid var(--light-metal);
+      border-radius: 5px;
+      padding: 15px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    .section-title {
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--light-metal);
+      padding-bottom: 5px;
+    }
+    
+    .track-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      position: relative;
+    }
+    
+    .track-line {
+      height: 6px;
+      background-color: #888;
+      position: relative;
+    }
+    
+    .track-line::before, .track-line::after {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 12px;
+      background-color: #777;
+      top: -3px;
+    }
+    
+    .track-line::before {
+      left: 0;
+    }
+    
+    .track-line::after {
+      right: 0;
+    }
+    
+    .sensor-point {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: var(--signal-yellow);
+      border-radius: 50%;
+      top: -3px;
       cursor: pointer;
+      transition: all 0.3s;
     }
-    button:hover {
-      background-color: #0056b3;
+    
+    .sensor-point:hover {
+      transform: scale(1.2);
+      box-shadow: 0 0 8px var(--signal-yellow);
     }
-    .status {
-      margin-top: 20px;
+    
+    .sensor-point[data-id="55"] {
+      left: 30%;
+    }
+    
+    .sensor-point[data-id="56"] {
+      left: 60%;
+    }
+    
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .control-button {
+      background-color: var(--dark-metal);
+      color: white;
+      border: 2px solid var(--light-metal);
+      border-radius: 5px;
+      padding: 10px 15px;
+      font-family: 'Courier New', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .control-button:hover {
+      background-color: #3d5875;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2);
+    }
+    
+    .timer-control {
+      display: flex;
+      align-items: center;
+      margin-top: 15px;
+    }
+    
+    .timer-control label {
+      margin-right: 10px;
+    }
+    
+    .timer-control input {
+      width: 60px;
+      background-color: var(--dark-metal);
+      color: white;
+      border: 1px solid var(--light-metal);
+      padding: 5px;
+      border-radius: 3px;
+    }
+    
+    .signal-indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin-left: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+      display: inline-block;
+    }
+    
+    .signal-indicator.red {
+      background-color: var(--signal-red);
+    }
+    
+    .signal-indicator.green {
+      background-color: var(--signal-green);
+    }
+    
+    .signal-indicator.yellow {
+      background-color: var(--signal-yellow);
+    }
+    
+    .console-output {
+      background-color: #111;
+      color: #2ecc71;
+      font-family: 'Courier New', monospace;
       padding: 10px;
-      background-color: #f0f0f0;
-      border-radius: 4px;
-      min-height: 100px;
+      border-radius: 5px;
+      height: 150px;
+      overflow-y: auto;
+      margin-top: 20px;
+      border: 1px solid var(--light-metal);
+    }
+    
+    .log-entry {
+      margin: 2px 0;
+      word-break: break-all;
+    }
+    
+    .log-entry.error {
+      color: var(--signal-red);
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--switch-bg);
+      transition: .4s;
+      border-radius: 30px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background-color: var(--signal-green);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(30px);
     }
   </style>
 </head>
 <body>
-  <h1>Train Room Control</h1>
-  
-  <div class="button-panel">
-    <button id="sensor55">Activate Sensor 55</button>
-    <button id="sensor56">Activate Sensor 56</button>
-    <button id="timerLight">Light On (15min Timer)</button>
-    <button id="lightOn">Light On</button>
-    <button id="lightOff">Light Off</button>
-  </div>
-  
-  <div class="status" id="statusLog">
-    <p>Status messages will appear here...</p>
+  <div class="control-panel">
+    <div class="panel-header">
+      <div class="panel-title">LIFX Train Control System <span class="status-indicator"></span></div>
+      <div class="system-time" id="systemTime">00:00:00</div>
+    </div>
+    
+    <div class="panel-main">
+      <div class="section">
+        <div class="section-title">Track Sensors</div>
+        <div class="track-diagram">
+          <div class="track-line">
+            <div class="sensor-point" data-id="55" id="sensor55" title="Sensor 55"></div>
+            <div class="sensor-point" data-id="56" id="sensor56" title="Sensor 56"></div>
+          </div>
+          <div class="track-info">
+            <span>Track ID: TRACK5 | Signal Mast: SM13 WB | Status: <span id="trackStatus">Clear</span></span>
+          </div>
+        </div>
+        
+        <div class="controls">
+          <button class="control-button" id="manualSensor55">
+            Trigger Sensor 55
+            <span class="signal-indicator yellow"></span>
+          </button>
+          <button class="control-button" id="manualSensor56">
+            Trigger Sensor 56
+            <span class="signal-indicator yellow"></span>
+          </button>
+          <button class="control-button" id="resetSignals">
+            Reset Signal Mast
+            <span class="signal-indicator green"></span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-title">LIFX Light Control</div>
+        <div class="controls">
+          <button class="control-button" id="lightOn">
+            Turn Light ON
+            <span class="signal-indicator green"></span>
+          </button>
+          <button class="control-button" id="lightOff">
+            Turn Light OFF
+            <span class="signal-indicator red"></span>
+          </button>
+          <div class="timer-control">
+            <button class="control-button" id="timerLight">
+              Timer Control
+            </button>
+            <input type="number" id="timerDuration" value="15" min="1" max="60"> min
+          </div>
+          <div class="timer-control">
+            <label>Auto Shutdown:</label>
+            <label class="switch">
+              <input type="checkbox" id="autoShutdown" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <div class="section-title">System Console</div>
+      <div class="console-output" id="consoleOutput"></div>
+    </div>
   </div>
 
-  <script src="app.js"></script>
   <script>
-    // Additional inline scripts for direct light control
-    document.getElementById('lightOn').addEventListener('click', function() {
-      controlLifxLight('on')
-        .then(response => {
-          logStatus(`Light turned on: ${JSON.stringify(response)}`);
-        })
-        .catch(error => {
-          logStatus(`Error: ${error.message}`);
-        });
-    });
-    
-    document.getElementById('lightOff').addEventListener('click', function() {
-      controlLifxLight('off')
-        .then(response => {
-          logStatus(`Light turned off: ${JSON.stringify(response)}`);
-        })
-        .catch(error => {
-          logStatus(`Error: ${error.message}`);
-        });
-    });
-    
-    // Function to log status messages to the UI
-    function logStatus(message) {
-      const statusLog = document.getElementById('statusLog');
-      const timeStamp = new Date().toLocaleTimeString();
-      statusLog.innerHTML = `<p>${timeStamp}: ${message}</p>` + statusLog.innerHTML;
-    }
-    
-    // Override console.log for UI display
+    // LIFX light ID
+    const LIFX_LIGHT_ID = "d073d56b8996"; // Lifx Train Room
+
+    // Cloudflare Worker URL - replace with your actual deployed worker URL
+    const WORKER_URL = "https://railtrain.vdo.workers.dev";
+
+    // Custom console logger that displays in the UI
+    const consoleOutput = document.getElementById('consoleOutput');
     const originalConsoleLog = console.log;
+    const originalConsoleError = console.error;
+
     console.log = function(message) {
       originalConsoleLog.apply(console, arguments);
-      logStatus(message);
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry';
+      logEntry.textContent = `[${getCurrentTime()}] ${message}`;
+      consoleOutput.appendChild(logEntry);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
     };
-    
-    // Override console.error for UI display
-    const originalConsoleError = console.error;
+
     console.error = function(message) {
       originalConsoleError.apply(console, arguments);
-      logStatus(`ERROR: ${message}`);
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry error';
+      logEntry.textContent = `[${getCurrentTime()}] ERROR: ${message}`;
+      consoleOutput.appendChild(logEntry);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
     };
+
+    // Function to get current time
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toTimeString().split(' ')[0];
+    }
+
+    // Update system time display
+    function updateSystemTime() {
+      document.getElementById('systemTime').textContent = getCurrentTime();
+    }
+    setInterval(updateSystemTime, 1000);
+    updateSystemTime();
+
+    // Function to control LIFX light through Cloudflare Worker
+    function controlLifxLight(state) {
+      const url = `${WORKER_URL}/api/lifx/${LIFX_LIGHT_ID}/${state}`;
+      
+      return fetch(url, {
+        method: 'POST'
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log(`LIFX light turned ${state}`);
+          return response.json();
+        } else {
+          console.error(`Failed to change LIFX light state: ${response.status}`);
+          return response.text().then(text => {
+            throw new Error(text);
+          });
+        }
+      });
+    }
+
+    // Example handler functions that could be connected to UI elements or sensor events
+    function handleSensorActivated(sensorId) {
+      console.log(`Sensor ${sensorId} activated`);
+      
+      // Update UI
+      document.getElementById('trackStatus').textContent = 'Occupied';
+      document.getElementById('trackStatus').style.color = 'var(--signal-red)';
+      
+      // Turn on the light
+      controlLifxLight("on")
+        .then(() => {
+          console.log("Light turned on");
+          
+          // Play sound if needed
+          const sound = new Audio('resources/sounds/Crossing.wav');
+          sound.play();
+          
+          // Set timeout to perform additional actions after 5 seconds
+          setTimeout(() => {
+            console.log("Waiting 5 seconds.");
+            // Change signal mast (implementation depends on your train system API)
+            updateSignalMast("SM13 WB TRACK5", "Stop");
+          }, 5000);
+        })
+        .catch(error => {
+          console.error("Error controlling light:", error);
+        });
+    }
+
+    // Example function to update a signal mast (implementation depends on your train control system)
+    function updateSignalMast(mastId, aspect) {
+      console.log(`Setting Signal Mast ${mastId} to ${aspect}`);
+      // Update UI
+      document.getElementById('trackStatus').textContent = aspect;
+    }
+
+    // Function to reset signals
+    function resetSignals() {
+      console.log("Resetting signals to Clear");
+      document.getElementById('trackStatus').textContent = 'Clear';
+      document.getElementById('trackStatus').style.color = 'var(--signal-green)';
+      updateSignalMast("SM13 WB TRACK5", "Clear");
+    }
+
+    // Function to auto-turn off the light after a specified duration
+    function turnOnLightWithTimer(duration = 15) {
+      if (!duration || isNaN(duration) || duration < 1) {
+        duration = 15;
+      }
+      
+      controlLifxLight("on")
+        .then(() => {
+          console.log(`Light turned on for ${duration} minutes`);
+          
+          // Only set timeout if auto shutdown is enabled
+          if (document.getElementById('autoShutdown').checked) {
+            // Set timeout to turn off the light
+            setTimeout(() => {
+              controlLifxLight("off")
+                .then(() => console.log("Light turned off automatically"))
+                .catch(error => console.error("Error turning off light:", error));
+            }, duration * 60 * 1000); // Convert minutes to milliseconds
+          }
+        })
+        .catch(error => {
+          console.error("Error turning on light:", error);
+        });
+    }
+
+    // Setup event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Track sensor points
+      const sensorPoints = document.querySelectorAll('.sensor-point');
+      sensorPoints.forEach(point => {
+        point.addEventListener('click', () => {
+          const sensorId = point.getAttribute('data-id');
+          handleSensorActivated(sensorId);
+        });
+      });
+      
+      // Manual sensor trigger buttons
+      document.getElementById('manualSensor55').addEventListener('click', () => handleSensorActivated('55'));
+      document.getElementById('manualSensor56').addEventListener('click', () => handleSensorActivated('56'));
+      
+      // Reset signals button
+      document.getElementById('resetSignals').addEventListener('click', resetSignals);
+      
+      // Light control buttons
+      document.getElementById('lightOn').addEventListener('click', () => controlLifxLight("on"));
+      document.getElementById('lightOff').addEventListener('click', () => controlLifxLight("off"));
+      
+      // Timer control
+      document.getElementById('timerLight').addEventListener('click', () => {
+        const duration = parseInt(document.getElementById('timerDuration').value, 10);
+        turnOnLightWithTimer(duration);
+      });
+      
+      // Log initialization
+      console.log("Train Control System initialized");
+    });
   </script>
 </body>
 </html>
