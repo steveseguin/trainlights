@@ -460,20 +460,31 @@
       updateSignalMast("SM13 WB TRACK5", "Clear");
     }
 
+    // Keep the newest successful timer request from being cut short by an older one.
+    let lightOffTimer = null;
+    let lightTimerRequest = 0;
+    let appliedLightTimerRequest = 0;
+
     // Function to auto-turn off the light after a specified duration
     function turnOnLightWithTimer(duration = 15) {
       if (!duration || isNaN(duration) || duration < 1) {
         duration = 15;
       }
       
+      const request = ++lightTimerRequest;
       controlLifxLight("on")
         .then(() => {
+          if (request < appliedLightTimerRequest) return;
+          appliedLightTimerRequest = request;
+          clearTimeout(lightOffTimer);
+          lightOffTimer = null;
           console.log(`Light turned on for ${duration} minutes`);
           
           // Only set timeout if auto shutdown is enabled
           if (document.getElementById('autoShutdown').checked) {
             // Set timeout to turn off the light
-            setTimeout(() => {
+            lightOffTimer = setTimeout(() => {
+              lightOffTimer = null;
               controlLifxLight("off")
                 .then(() => console.log("Light turned off automatically"))
                 .catch(error => console.error("Error turning off light:", error));

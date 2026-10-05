@@ -55,14 +55,25 @@ function updateSignalMast(mastId, aspect) {
   // This would need to call your train control system's API
 }
 
+// Keep the newest successful timer request from being cut short by an older one.
+let lightOffTimer = null;
+let lightTimerRequest = 0;
+let appliedLightTimerRequest = 0;
+
 // Function to auto-turn off the light after a specified duration
 function turnOnLightWithTimer(duration = 15) {
+  const request = ++lightTimerRequest;
   controlLifxLight("on")
     .then(() => {
+      if (request < appliedLightTimerRequest) return;
+      appliedLightTimerRequest = request;
+      clearTimeout(lightOffTimer);
+      lightOffTimer = null;
       console.log(`Light turned on for ${duration} minutes`);
       
       // Set timeout to turn off the light
-      setTimeout(() => {
+      lightOffTimer = setTimeout(() => {
+        lightOffTimer = null;
         controlLifxLight("off")
           .then(() => console.log("Light turned off automatically"))
           .catch(error => console.error("Error turning off light:", error));
