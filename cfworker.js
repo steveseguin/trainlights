@@ -61,7 +61,14 @@ export default {
         
         const responseData = await response.json();
         
-        if (response.ok) {
+        // A 207 response can contain failed device operations despite being 2xx.
+        const operationsSucceeded = response.status !== 207 || (
+          Array.isArray(responseData.results) &&
+          responseData.results.length > 0 &&
+          responseData.results.every(result => result && result.status === 'ok')
+        );
+
+        if (response.ok && operationsSucceeded) {
           return new Response(JSON.stringify({ 
             success: true,
             message: `LIFX light ${lightId} turned ${state}`,
@@ -77,7 +84,7 @@ export default {
             error: 'LIFX API error',
             details: responseData
           }), {
-            status: response.status,
+            status: response.ok ? 502 : response.status,
             headers: {
               'Content-Type': 'application/json',
               ...corsHeaders
